@@ -1,2 +1,3 @@
 # Ignore API Key!
 .streamlit/secrets.toml
+.DS_Store
