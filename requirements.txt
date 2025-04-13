@@ -1,7 +1,5 @@
-numpy
 streamlit
 pandas
-json
-os
+numpy
 openai
-plotly.express
+plotly
