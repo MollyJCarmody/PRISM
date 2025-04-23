@@ -82,7 +82,10 @@ available_sub_industries = sorted(
 sub_industry = st.selectbox("Select Sub-Industry:", available_sub_industries)
 
 available_cities = sorted(
-    df_source[df_source["industry"] == industry]["city_name"].dropna().unique()
+    df_source[
+        (df_source["industry"] == industry) &
+        (df_source["sub_industry"] == sub_industry)
+    ]["city_name"].dropna().unique()
 )
 city = st.selectbox("Select City:", available_cities)
 
