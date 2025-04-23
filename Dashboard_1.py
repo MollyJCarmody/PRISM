@@ -69,7 +69,7 @@ source = prompt_to_data_source[user_prompt]
 
 if source == "Google Trends":
     df_source = google_trends_data
-else if source == "News Articles":
+elif source == "News Articles":
     df_source = news_articles_data
 
 # Dropdowns for filtering.
