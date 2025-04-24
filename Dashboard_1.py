@@ -27,6 +27,10 @@ client = openai.OpenAI(api_key = st.secrets["OPENAI_API_KEY"])
 # Load datasets.
 google_trends_data = pd.read_csv("google_trends_data.csv")
 news_articles_data = pd.read_csv("news_articles_data.csv")
+reddit_posts_data = pd.read_csv("reddit_posts_data.csv")
+reddit_sentiments_data = pd.read_csv("reddit_sentiments_data.csv")
+google_reviews_data = pd.read_csv("google_reviews_data.csv")
+google_reviews_sentiments_data = pd.read_csv("google_reviews_sentiments_data.csv")
 
 # Convert data types.
 google_trends_data["id"] = google_trends_data["id"].astype(int)
@@ -47,6 +51,31 @@ news_articles_data["industry"] = news_articles_data["industry"].astype(str)
 news_articles_data["sub_industry"] = news_articles_data["sub_industry"].astype(str)
 news_articles_data["keywords"] = news_articles_data["keywords"].apply(lambda x: str(x))
 
+reddit_posts_data["interpreted_theme_reddit"] = reddit_posts_data["interpreted_theme_reddit"].apply(
+    lambda x: [t.strip() for t in x.split("/") if pd.notnull(x)]
+)
+reddit_posts_data["industry"] = reddit_posts_data["industry"].astype(str)
+reddit_posts_data["sub_industry"] = reddit_posts_data["sub_industry"].astype(str)
+reddit_posts_data["data_source"] = reddit_posts_data["data_source"].astype(str)
+
+reddit_sentiments_data["sentiment_reddit"] = reddit_sentiments_data["sentiment_reddit"].astype(str).str.lower()
+reddit_sentiments_data["industry"] = reddit_sentiments_data["industry"].astype(str)
+reddit_sentiments_data["sub_industry"] = reddit_sentiments_data["sub_industry"].astype(str)
+reddit_sentiments_data["data_source"] = reddit_sentiments_data["data_source"].astype(str)
+
+google_reviews_data["interpreted_theme_google"] = google_reviews_data["interpreted_theme"].astype(str).str.lower()
+google_reviews_data["city_name"] = google_reviews_data["city_name"].astype(str)
+google_reviews_data["industry"] = google_reviews_data["industry"].astype(str)
+google_reviews_data["sub_industry"] = google_reviews_data["sub_industry"].astype(str)
+google_reviews_data["data_source"] = google_reviews_data["data_source"].astype(str)
+
+google_reviews_sentiments_data["company"] = google_reviews_sentiments_data["company"].astype(str).str.lower()
+google_reviews_sentiments_data["sentiment_google"] = google_reviews_sentiments_data["sentiment_google"].astype(str).str.lower()
+google_reviews_sentiments_data["city_name"] = google_reviews_sentiments_data["city_name"].astype(str)
+google_reviews_sentiments_data["industry"] = google_reviews_sentiments_data["industry"].astype(str)
+google_reviews_sentiments_data["sub_industry"] = google_reviews_sentiments_data["sub_industry"].astype(str)
+google_reviews_sentiments_data["data_source"] = google_reviews_sentiments_data["data_source"].astype(str)
+
 # Streamlit UI Components:
 st.title("PRISM: Platform for Real-Time Insights & Strategic Marketing​")
 
@@ -55,14 +84,16 @@ user_prompt = st.selectbox(
     "What would you like to do?",
     [
         "I want to generate content based on what people are currently searching on Google.",
-        "I want to generate content inspired by recent news articles."
+        "I want to generate content inspired by recent news articles.",
+        "I want to generate content using user sentiment and competitor insights."
     ]
 )
 
 # Map the selection back to data source.
 prompt_to_data_source = {
     "I want to generate content based on what people are currently searching on Google.": "Google Trends",
-    "I want to generate content inspired by recent news articles." : "News Articles"
+    "I want to generate content inspired by recent news articles." : "News Articles",
+    "I want to generate content using user sentiment and competitor insights." : "Reddit & Google Reviews"
 }
 
 source = prompt_to_data_source[user_prompt]
@@ -71,6 +102,13 @@ if source == "Google Trends":
     df_source = google_trends_data
 elif source == "News Articles":
     df_source = news_articles_data
+elif source == "Reddit & Google Reviews":
+    df_source = pd.concat([
+        google_reviews_data[["industry", "sub_industry", "city_name", "interpreted_theme_google"]].assign(company = "N/A", sentiment_google = "N/A", interpreted_theme_reddit = "N/A", sentiment_reddit = "N/A"),
+        google_reviews_sentiments_data[["industry", "sub_industry", "city_name", "company", "sentiment_google"]].assign(interpreted_theme_google = "N/A", interpreted_theme_reddit = "N/A", sentiment_reddit = "N/A"),
+        reddit_posts_data[["industry", "sub_industry", "interpreted_theme_reddit"]].assign(company = "N/A", sentiment_google = "N/A", interpreted_theme_google = "N/A", city_name = "N/A", sentiment_reddit = "N/A"),
+        reddit_sentiments_data[["industry", "sub_industry", "sentiment_reddit"]].assign(company = "N/A", sentiment_google = "N/A", interpreted_theme_google = "N/A", city_name = "N/A", interpreted_theme_reddit = "N/A")
+    ], ignore_index = True)
 
 # Dropdowns for filtering.
 available_industries = sorted(df_source["industry"].dropna().unique())

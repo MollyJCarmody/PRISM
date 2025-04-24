@@ -1,0 +1,54 @@
+top_words,interpreted_theme_reddit,sub_industry,industry,model_type,data_source
+"ai, people, future, like, human, think, want, world",ai / people / future,artificial intelligence,technology,BERTopic,Reddit & Google Reviews
+"datum, table, source, sql, like, spark, data, use",datum / table / source,artificial intelligence,technology,BERTopic,Reddit & Google Reviews
+"science, data, datum, interview, work, role, job, experience",science / data / datum,artificial intelligence,technology,BERTopic,Reddit & Google Reviews
+"model, train, onnx, dataset, test, code, sample, work",model / train / onnx,artificial intelligence,technology,BERTopic,Reddit & Google Reviews
+"science, datum, ai, data, startup, machine, learn, trend",science / datum / ai,artificial intelligence,technology,BERTopic,Reddit & Google Reviews
+"feel, like, don, life, want, know, time, think",feel / like / don,mental health,healthcare,BERTopic,Reddit & Google Reviews
+"anxiety, feel, panic, go, like, ve, attack, get",anxiety / feel / panic,mental health,healthcare,BERTopic,Reddit & Google Reviews
+"therapy, therapist, feel, like, ve, thing, session, tell",therapy / therapist / feel,mental health,healthcare,BERTopic,Reddit & Google Reviews
+"talkspace, insurance, session, pay, charge, minute, appointment, try",talkspace / insurance / session,mental health,healthcare,BERTopic,Reddit & Google Reviews
+"cloud, service, aw, cost, ai, hand, like, use",cloud / service / aw,cloud computing,technology,BERTopic,Reddit & Google Reviews
+"cloud, security, encryption, compromise, ai, quantum, google, threat",cloud / security / encryption,cloud computing,technology,BERTopic,Reddit & Google Reviews
+"brace, tooth, bite, jaw, orthodontist, say, like, fix",brace / tooth / bite,dental care,healthcare,BERTopic,Reddit & Google Reviews
+"patient, insurance, office, work, dental, pay, plan, dentist",patient / insurance / office,dental care,healthcare,BERTopic,Reddit & Google Reviews
+"retainer, tooth, wear, get, shift, day, year, brace",retainer / tooth / wear,dental care,healthcare,BERTopic,Reddit & Google Reviews
+"canal, patient, endo, rct, file, socket, fill, mm",canal / patient / endo,dental care,healthcare,BERTopic,Reddit & Google Reviews
+"product, seo, site, ecommerce, shopify, website, like, ve",product / seo / site,e-commerce,technology,BERTopic,Reddit & Google Reviews
+"business, work, ve, ad, year, checklist, learn, start",business / work / ve,e-commerce,technology,BERTopic,Reddit & Google Reviews
+"lbs, tariff, order, import, china, cheap, cost, good",lbs / tariff / order,e-commerce,technology,BERTopic,Reddit & Google Reviews
+"job, year, career, work, experience, role, company, tech",job / year / career,enterprise software,technology,BERTopic,Reddit & Google Reviews
+"promote, fuck, product, startup, like, work, customer, ve",promote / fuck / product,enterprise software,technology,BERTopic,Reddit & Google Reviews
+"file, docker, use, container, server, manage, host, add",file / docker / use,enterprise software,technology,BERTopic,Reddit & Google Reviews
+"security, cybersecurity, certification, soc, cyber, job, network, analyst",security / cybersecurity / certification,enterprise software,technology,BERTopic,Reddit & Google Reviews
+"detection, signal, hack, credential, attack, breach, provider, alert",detection / signal / hack,enterprise software,technology,BERTopic,Reddit & Google Reviews
+"proxy, run, npm, ip, service, error, server, reverse",proxy / run / npm,enterprise software,technology,BERTopic,Reddit & Google Reviews
+"server, drive, up, ram, power, tb, hdd, mb",server / drive / up,enterprise software,technology,BERTopic,Reddit & Google Reviews
+"password, key, account, encrypt, pass, api, access, authentication",password / key / account,enterprise software,technology,BERTopic,Reddit & Google Reviews
+"ai, human, openai, nurse, greed, chatgpt, future, record",ai / human / openai,enterprise software,technology,BERTopic,Reddit & Google Reviews
+"chinese, china, nvidia, government, export, possibility, tld, eu",chinese / china / nvidia,enterprise software,technology,BERTopic,Reddit & Google Reviews
+"azure, cloud, certification, role, hybrid, virginia, maximize, look",azure / cloud / certification,enterprise software,technology,BERTopic,Reddit & Google Reviews
+"judge, lawsuit, monopoly, hp, ad, google, settlement, antitrust",judge / lawsuit / monopoly,enterprise software,technology,BERTopic,Reddit & Google Reviews
+"cve, funding, cisa, foundation, pet, program, government, release",cve / funding / cisa,enterprise software,technology,BERTopic,Reddit & Google Reviews
+"s, fuck, use, user, like, file, t, tool",s / fuck / use,enterprise software,technology,LDA,Reddit & Google Reviews
+"s, promote, company, t, product, build, m, like",s / promote / company,enterprise software,technology,LDA,Reddit & Google Reviews
+"s, t, server, run, service, ve, m, use",s / t / server,enterprise software,technology,LDA,Reddit & Google Reviews
+"m, t, work, s, like, want, job, don",m / t / work,enterprise software,technology,LDA,Reddit & Google Reviews
+"m, ve, s, work, like, t, year, job",m / ve / s,enterprise software,technology,LDA,Reddit & Google Reviews
+"fintech, work, ai, financial, like, build, look, market",fintech / work / ai,fintech,technology,BERTopic,Reddit & Google Reviews
+"payment, bank, account, card, plaid, api, alternative, stripe",payment / bank / account,fintech,technology,BERTopic,Reddit & Google Reviews
+"medicare, insurance, plan, pay, cover, get, health, work",medicare / insurance / plan,health insurance,healthcare,BERTopic,Reddit & Google Reviews
+"car, insurance, claim, accident, company, driver, fault, pay",car / insurance / claim,health insurance,healthcare,BERTopic,Reddit & Google Reviews
+"like, feel, ve, day, know, go, get, don",like / feel / ve,specialty care,healthcare,BERTopic,Reddit & Google Reviews
+"cardiology, fellowship, year, patient, ep, program, thank, fellow",cardiology / fellowship / year,specialty care,healthcare,BERTopic,Reddit & Google Reviews
+"telemedicine, patient, healthcare, telehealth, work, doctor, need, care",telemedicine / patient / healthcare,telehealth,healthcare,BERTopic,Reddit & Google Reviews
+"epic, analyst, role, job, position, work, ve, certification",epic / analyst / role,telehealth,healthcare,BERTopic,Reddit & Google Reviews
+"therapy, online, therapist, find, help, affordable, session, somatic",therapy / online / therapist,telehealth,healthcare,BERTopic,Reddit & Google Reviews
+"pain, care, hurt, get, urgent, stitch, bad, like",pain / care / hurt,urgent care,healthcare,BERTopic,Reddit & Google Reviews
+"care, urgent, patient, insurance, test, visit, tell, wait",care / urgent / patient,urgent care,healthcare,BERTopic,Reddit & Google Reviews
+"doctor, bleed, go, blood, like, urgent, help, ve",doctor / bleed / go,urgent care,healthcare,BERTopic,Reddit & Google Reviews
+"s, test, m, go, like, ve, think, wait",s / test / m,urgent care,healthcare,LDA,Reddit & Google Reviews
+"m, get, ve, say, s, blood, don, start",m / get / ve,urgent care,healthcare,LDA,Reddit & Google Reviews
+"patient, work, s, insurance, visit, need, pay, like",patient / work / s,urgent care,healthcare,LDA,Reddit & Google Reviews
+"pain, m, s, feel, like, know, ve, go",pain / m / s,urgent care,healthcare,LDA,Reddit & Google Reviews
+"m, stitch, time, s, get, go, doctor, hour",m / stitch / time,urgent care,healthcare,LDA,Reddit & Google Reviews
