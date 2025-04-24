@@ -346,7 +346,10 @@ if st.button("Generate Content"):
             y = "Count",
             title = "Reddit Sentiment Distribution (All Users)",
             color = "Sentiment",
-            color_discrete_sequence=px.colors.qualitative.Set2
+            color_discrete_map = {
+                "positive": "#7AC47F",
+                "negative": "#E57373"
+            }
         )
         st.plotly_chart(fig_reddit)
         
@@ -360,7 +363,10 @@ if st.button("Generate Content"):
             y = "Count",
             title = f"Google Reviews Sentiment in {city}",
             color = "Sentiment",
-            color_discrete_sequence = px.colors.qualitative.Set3
+            color_discrete_map = {
+                "positive": "#7AC47F",
+                "negative": "#E57373"
+            }
         )
         st.plotly_chart(fig_google)
         
