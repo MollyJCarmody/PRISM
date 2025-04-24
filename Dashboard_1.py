@@ -63,7 +63,7 @@ reddit_sentiments_data["industry"] = reddit_sentiments_data["industry"].astype(s
 reddit_sentiments_data["sub_industry"] = reddit_sentiments_data["sub_industry"].astype(str)
 reddit_sentiments_data["data_source"] = reddit_sentiments_data["data_source"].astype(str)
 
-google_reviews_data["interpreted_theme_google"] = google_reviews_data["interpreted_theme"].astype(str).str.lower()
+google_reviews_data["interpreted_theme_google"] = google_reviews_data["interpreted_theme_google"].astype(str).str.lower()
 google_reviews_data["city_name"] = google_reviews_data["city_name"].astype(str)
 google_reviews_data["industry"] = google_reviews_data["industry"].astype(str)
 google_reviews_data["sub_industry"] = google_reviews_data["sub_industry"].astype(str)
