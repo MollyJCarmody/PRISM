@@ -69,8 +69,8 @@ google_reviews_data["industry"] = google_reviews_data["industry"].astype(str)
 google_reviews_data["sub_industry"] = google_reviews_data["sub_industry"].astype(str)
 google_reviews_data["data_source"] = google_reviews_data["data_source"].astype(str)
 
-google_reviews_sentiments_data["company"] = google_reviews_sentiments_data["company"].astype(str).str.lower()
 google_reviews_sentiments_data["sentiment_google"] = google_reviews_sentiments_data["sentiment_google"].astype(str).str.lower()
+google_reviews_sentiments_data["company"] = google_reviews_sentiments_data["company"].astype(str)
 google_reviews_sentiments_data["city_name"] = google_reviews_sentiments_data["city_name"].astype(str)
 google_reviews_sentiments_data["industry"] = google_reviews_sentiments_data["industry"].astype(str)
 google_reviews_sentiments_data["sub_industry"] = google_reviews_sentiments_data["sub_industry"].astype(str)
@@ -122,7 +122,8 @@ sub_industry = st.selectbox("Select Sub-Industry:", available_sub_industries)
 available_cities = sorted(
     df_source[
         (df_source["industry"] == industry) &
-        (df_source["sub_industry"] == sub_industry)
+        (df_source["sub_industry"] == sub_industry) &
+        (df_source["city_name"] != "N/A")
     ]["city_name"].dropna().unique()
 )
 city = st.selectbox("Select City:", available_cities)
@@ -253,7 +254,7 @@ if st.button("Generate Content"):
             response = client.chat.completions.create(
                 model = llm_model,
                 messages = [
-                    {"role": "system", "content": "You are an AI that generates marketing content based on location and industry-specific keywords."},
+                    {"role": "system", "content": "You generate marketing content based on regional Google search trends. Use the keywords, but feel free to expand for accuracy."},
                     {"role": "user", "content": json.dumps(payload)}
                 ]
             )
@@ -297,7 +298,7 @@ if st.button("Generate Content"):
             response = client.chat.completions.create(
                 model = llm_model,
                 messages = [
-                    {"role": "system", "content": "You are an AI that generates marketing content based on location and industry-specific keywords."},
+                    {"role": "system", "content": "You generate marketing content inspired by recent news. Use the keywords, but feel free to expand for accuracy."},
                     {"role": "user", "content": json.dumps(payload)}
                 ]
             )
@@ -307,5 +308,102 @@ if st.button("Generate Content"):
             st.subheader("Generated Content")
             st.write(generated_content)
 
+        except openai.OpenAIError as e:
+            st.error(f"OpenAI API Error: {e}")
+            
+    elif source == "Reddit & Google Reviews":
+        reddit_filtered_sentiment = reddit_sentiments_data[
+            (reddit_sentiments_data["industry"] == industry) &
+            (reddit_sentiments_data["sub_industry"] == sub_industry)
+        ]
+        
+        reddit_filtered_theme = reddit_posts_data[
+            (reddit_posts_data["industry"] == industry) &
+            (reddit_posts_data["sub_industry"] == sub_industry)
+        ]
+        
+        google_filtered_sentiment = google_reviews_sentiments_data[
+            (google_reviews_sentiments_data["industry"] == industry) &
+            (google_reviews_sentiments_data["sub_industry"] == sub_industry) &
+            (google_reviews_sentiments_data["city_name"] == city)
+        ]
+        
+        google_filtered_theme = google_reviews_data[
+            (google_reviews_data["industry"] == industry) &
+            (google_reviews_data["sub_industry"] == sub_industry) &
+            (google_reviews_data["city_name"] == city)
+        ]
+        
+        # 1. Sentiment Charts
+        
+        reddit_sentiment_counts = reddit_filtered_sentiment["sentiment_reddit"].value_counts().reset_index()
+        reddit_sentiment_counts.columns = ["Sentiment", "Count"]
+        
+        st.subheader("Reddit Sentiment (Global)")
+        fig_reddit = px.bar(
+            reddit_sentiment_counts,
+            x = "Sentiment",
+            y = "Count",
+            title = "Reddit Sentiment Distribution (All Users)",
+            color = "Sentiment",
+            color_discrete_sequence=px.colors.qualitative.Set2
+        )
+        st.plotly_chart(fig_reddit)
+        
+        google_sentiment_counts = google_filtered_sentiment["sentiment_google"].value_counts().reset_index()
+        google_sentiment_counts.columns = ["Sentiment", "Count"]
+        
+        st.subheader(f"Google Reviews Sentiment in {city}")
+        fig_google = px.bar(
+            google_sentiment_counts,
+            x = "Sentiment",
+            y = "Count",
+            title = f"Google Reviews Sentiment in {city}",
+            color = "Sentiment",
+            color_discrete_sequence = px.colors.qualitative.Set3
+        )
+        st.plotly_chart(fig_google)
+        
+        # 2. Positive Companies in Your Area (from Google)
+        
+        positive_companies = google_filtered_sentiment[
+            google_filtered_sentiment["sentiment_google"] == "positive"
+        ]["company"].value_counts().head(3).index.tolist()
+        
+        if positive_companies:
+            st.markdown(f"**Companies with positive sentiment in {city}:** " + ", ".join(positive_companies))
+        else:
+            st.markdown(f"**No companies with positive sentiment found in {city}.**")
+
+        # 3. LLM Payload
+
+        # Combine top Reddit themes and Google review themes as keywords.
+        reddit_keywords = reddit_filtered_theme["interpreted_theme_reddit"].explode().dropna().unique().tolist()
+        google_keywords = google_filtered_theme["interpreted_theme_google"].dropna().str.split().explode().str.title().value_counts().index.tolist()
+        
+        combined_keywords = list(set(reddit_keywords + google_keywords))[:10]
+        
+        payload = {
+            "keywords": combined_keywords,
+            "industry": industry,
+            "ad_medium": "social media",
+            "platform": platform
+        }
+        
+        st.write("Generating content...")
+        
+        try:
+            response = client.chat.completions.create(
+                model = llm_model,
+                messages = [
+                    {"role": "system", "content": "You generate marketing content based on real user sentiment and themes. Use the keywords, but feel free to expand for accuracy."},
+                    {"role": "user", "content": json.dumps(payload)}
+                ]
+            )
+            
+            generated_content = response.choices[0].message.content
+            st.subheader("Generated Content")
+            st.write(generated_content)
+        
         except openai.OpenAIError as e:
             st.error(f"OpenAI API Error: {e}")
