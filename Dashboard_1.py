@@ -20,10 +20,6 @@ import json
 import os
 import openai
 import plotly.express as px
-import spacy
-
-# Load spaCy English model.
-nlp = spacy.load("en_core_web_sm")
 
 # Initialize OpenAI client.
 client = openai.OpenAI(api_key = st.secrets["OPENAI_API_KEY"])
@@ -140,18 +136,6 @@ platform = st.selectbox("Select Content Type/Platform:", [
 # LLM Model Selection:
 llm_model = "gpt-4o-mini"
 
-# Extract Business Names:
-def extract_business_names(keywords_list):
-    business_names = []
-    
-    for keyword in keywords_list:
-        doc = nlp(keyword)
-        for ent in doc.ents:
-            if ent.label_ in ["ORG", "FAC"]: # ORG = Organization & FAC = Facility
-                business_names.append(ent.text)
-    
-    return list(set(business_names))
-
 # Button to generate content.
 if st.button("Generate Content"):
     
@@ -255,26 +239,9 @@ if st.button("Generate Content"):
                 top_topics = topic_df.sort_values(by = "search_volume", ascending = False)["keywords"].unique()[:10]
                 related_topics = ", ".join(top_topics)
         
-        # Extract keywords as a list.
-        keyword_texts = filtered_df["keywords"].dropna().tolist()
-        
-        # Run NER to detect business names.
-        business_names_detected = extract_business_names(keyword_texts)
-        
-        # Display (Do Not Pass to LLM):
-        if business_names_detected:
-            st.subheader("Popular, Local Businesses")
-            st.write(", ".join(business_names_detected))
-            
-        # Flat set of all non-business keywords.
-        non_business_keywords = [
-            kw for kw in keyword_set
-            if not any(biz_name.lower() in kw.lower() for biz_name in business_names_detected)
-        ]
-        
         # LLM Payload:
         payload = {
-            "keywords": non_business_keywords[:20], # Ensure the final keyword list does not exceed 20.
+            "keywords": list(keyword_set)[:20], # Ensure the final keyword list does not exceed 20.
             "industry": industry,
             "ad_medium": "social media",
             "platform": platform
