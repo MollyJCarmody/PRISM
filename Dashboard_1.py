@@ -20,6 +20,10 @@ import json
 import os
 import openai
 import plotly.express as px
+import spacy
+
+# Load spaCy English model.
+nlp = spacy.load("en_core_web_sm")
 
 # Initialize OpenAI client.
 client = openai.OpenAI(api_key = st.secrets["OPENAI_API_KEY"])
@@ -136,6 +140,18 @@ platform = st.selectbox("Select Content Type/Platform:", [
 # LLM Model Selection:
 llm_model = "gpt-4o-mini"
 
+# Extract Business Names:
+def extract_business_names(keywords_list):
+    business_names = []
+    
+    for keyword in keywords_list:
+        doc = nlp(keyword)
+        for ent in doc.ents:
+            if ent.label_ in ["ORG", "FAC"]: # ORG = Organization & FAC = Facility
+                business_names.append(ent.text)
+    
+    return list(set(business_names))
+
 # Button to generate content.
 if st.button("Generate Content"):
     
@@ -202,7 +218,7 @@ if st.button("Generate Content"):
             keyword_set = set()
             for cluster in top_clusters:
                 cluster_keywords = non_breakout_df[non_breakout_df["cluster_number"] == cluster]["keywords"].values[0]
-                top_keywords = cluster_keywords.split(", ")[:5] # Get up to 5 keywords per cluster.
+                top_keywords = cluster_keywords.split(", ")[:10] # Get up to 10 keywords per cluster.
                 keyword_set.update(top_keywords) # Use set to avoid duplicates.
                 
             keywords = ", ".join(keyword_set) # Convert set to comma-separated string.
@@ -223,25 +239,42 @@ if st.button("Generate Content"):
             
             # Check if clustering exists in the data.
             if "cluster_number" in topic_df.columns:
-                # Get the top topics from each cluster (up to 5 per cluster).
+                # Get the top topics from each cluster.
                 topic_clusters = topic_df.groupby("cluster_number")["search_volume"].sum().nlargest(5).index.tolist()
                 topic_set = set()
                 
                 for cluster in topic_clusters:
                     cluster_topics = topic_df[topic_df["cluster_number"] == cluster]["keywords"].values[0]
-                    top_cluster_topics = cluster_topics.split(", ")[:5] # Up to 5 topics per cluster.
+                    top_cluster_topics = cluster_topics.split(", ")[:10] # Up to 10 topics per cluster.
                     topic_set.update(top_cluster_topics) # Avoid duplicates.
                     
                 related_topics = ", ".join(topic_set)
             
             else:
                 # If no clustering, just use top topics by search volume.
-                top_topics = topic_df.sort_values(by = "search_volume", ascending = False)["keywords"].unique()[:5]
+                top_topics = topic_df.sort_values(by = "search_volume", ascending = False)["keywords"].unique()[:10]
                 related_topics = ", ".join(top_topics)
-
+        
+        # Extract keywords as a list.
+        keyword_texts = filtered_df["keywords"].dropna().tolist()
+        
+        # Run NER to detect business names.
+        business_names_detected = extract_business_names(keyword_texts)
+        
+        # Display (Do Not Pass to LLM):
+        if business_names_detected:
+            st.subheader("Popular, Local Businesses")
+            st.write(", ".join(business_names_detected))
+            
+        # Flat set of all non-business keywords.
+        non_business_keywords = [
+            kw for kw in keyword_set
+            if not any(biz_name.lower() in kw.lower() for biz_name in business_names_detected)
+        ]
+        
         # LLM Payload:
         payload = {
-            "keywords": list(keyword_set)[:10], # Ensure the final keyword list does not exceed 10.
+            "keywords": non_business_keywords[:20], # Ensure the final keyword list does not exceed 20.
             "industry": industry,
             "ad_medium": "social media",
             "platform": platform
